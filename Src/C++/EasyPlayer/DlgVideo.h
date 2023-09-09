@@ -18,6 +18,7 @@ public:
 	void	SetWindowId(int _windowId);
 	void	SetShownToScale(int shownToScale);
 	void	SetURL(char *url);
+	void    Play(char *url);
 
 	bool	bDrag;
 

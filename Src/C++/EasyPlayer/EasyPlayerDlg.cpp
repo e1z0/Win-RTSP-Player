@@ -42,6 +42,8 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -54,6 +56,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_BN_CLICKED(IDOK, &CAboutDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -126,9 +129,9 @@ BOOL CEasyPlayerDlg::OnInitDialog()
 
 	CString strValidTime;
 	if(m_nValidTimes == EASY_ACTIVATE_SUCCESS)
-		strValidTime.Format(_T("EasyPlayer，已经永久免费！"));
+		strValidTime.Format(_T("Win RTSP Player"));
 	else
-		strValidTime.Format(_T("授权剩余时间 %d 天"), m_nValidTimes);
+		strValidTime.Format(_T("Yeaaaaah!"), m_nValidTimes);
 	SetString(4, strValidTime );
 
 	CreateComponents();
@@ -153,6 +156,10 @@ BOOL CEasyPlayerDlg::OnInitDialog()
 				if (0 != strcmp(szURL, "\0"))
 				{
 					pVideoWindow->pDlgVideo[idx++].SetURL(szURL);
+					// implement autoplay here
+
+					// autoplay end
+					
 				}
 			}
 		}
@@ -284,12 +291,12 @@ void	CEasyPlayerDlg::CreateComponents()
 
 	if (NULL != pComboxSplitScreen)
 	{
-		pComboxSplitScreen->AddString(TEXT("4画面"));
-		pComboxSplitScreen->AddString(TEXT("8画面"));
-		pComboxSplitScreen->AddString(TEXT("9画面"));
-		pComboxSplitScreen->AddString(TEXT("16画面"));
-		pComboxSplitScreen->AddString(TEXT("25画面"));
-		pComboxSplitScreen->AddString(TEXT("64画面"));
+		pComboxSplitScreen->AddString(TEXT("4 Cams"));
+		pComboxSplitScreen->AddString(TEXT("8 Cams"));
+		pComboxSplitScreen->AddString(TEXT("9 Cams"));
+		pComboxSplitScreen->AddString(TEXT("16 Cams"));
+		pComboxSplitScreen->AddString(TEXT("25 Cams"));
+		pComboxSplitScreen->AddString(TEXT("64 Cams"));
 		pComboxSplitScreen->SetCurSel(0);
 	}
 	if (NULL != pComboxRenderFormat)
@@ -635,4 +642,11 @@ LRESULT CEasyPlayerDlg::OnLog(WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+
+void CAboutDlg::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnOK();
 }

@@ -6,8 +6,35 @@
 #include "DlgVideo.h"
 #include "afxdialogex.h"
 #include "EasyPlayerDlg.h"
+//#include <windows.h>
+//#include <string>
 
 // CDlgVideo ¶Ô»°¿ò
+
+/*
+std::wstring ReadRegistryStringValue(const std::wstring& valueName) {
+	HKEY hKey = HKEY_CURRENT_USER;
+	const std::wstring& subKey = L"SOFTWARE\\win-rtsp-player";
+    HKEY hSubKey;
+    if (RegOpenKeyExW(hKey, subKey.c_str(), 0, KEY_READ, &hSubKey) == ERROR_SUCCESS) {
+        DWORD bufferSize = 0;
+        if (RegQueryValueExW(hSubKey, valueName.c_str(), nullptr, nullptr, nullptr, &bufferSize) == ERROR_SUCCESS) {
+            if (bufferSize > 0) {
+                std::wstring result;
+                result.resize(bufferSize / sizeof(wchar_t));
+                if (RegQueryValueExW(hSubKey, valueName.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(&result[0]), &bufferSize) == ERROR_SUCCESS) {
+                    // Remove any trailing null characters
+                    result.resize(wcslen(result.c_str()));
+                    RegCloseKey(hSubKey);
+                    return result;
+                }
+            }
+        }
+        RegCloseKey(hSubKey);
+    }
+    return L""; // Return an empty string if there's an error or if the value doesn't exist
+}
+*/
 
 IMPLEMENT_DYNAMIC(CDlgVideo, CDialogEx)
 
@@ -30,6 +57,7 @@ void CDlgVideo::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
+
 
 
 BEGIN_MESSAGE_MAP(CDlgVideo, CDialogEx)
@@ -138,22 +166,120 @@ void CDlgVideo::OnMouseMove(UINT nFlags, CPoint point)
 void	CDlgVideo::SetWindowId(int _windowId)	
 {
 	m_WindowId = _windowId;
-
+	
 	if (m_WindowId == 0)
 	{
-		if (NULL != pEdtURL)		pEdtURL->SetWindowText(TEXT("rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov"));
+		if (NULL != pEdtURL) pEdtURL->SetWindowText(TEXT("first stream"));
+			 
 	}
-	//if (m_WindowId == 1)
+	if (m_WindowId == 1)
+	{
+		if (NULL != pEdtURL) pEdtURL->SetWindowText(TEXT("second stream"));
+	}
+	if (m_WindowId == 2)
+	{
+		if (NULL != pEdtURL) pEdtURL->SetWindowText(TEXT("third stream"));
+	}
+	if (m_WindowId == 3)
+	{
+		if (NULL != pEdtURL) pEdtURL->SetWindowText(TEXT("4th stream"));
+	}
 	//{
 	//	//if (NULL != pEdtURL)		pEdtURL->SetWindowText(TEXT("rtsp://121.15.129.227"));
 	//	if (NULL != pEdtURL)		pEdtURL->SetWindowText(TEXT("rtsp://192.168.1.101:554/id=0"));
 	//}	
 }
+
 void	CDlgVideo::SetURL(char *url)
 {
 	wchar_t wszURL[128] = {0,};
 	MByteToWChar(url, wszURL, sizeof(wszURL)/sizeof(wszURL[0]));
-	if (NULL != pEdtURL)		pEdtURL->SetWindowText(wszURL);
+	if (NULL != pEdtURL) {
+		pEdtURL->SetWindowText(wszURL);
+		Play(url);
+	}
+}
+
+void CDlgVideo::Play(char *url) {
+	if (m_ChannelId > 0)
+	{
+		int nChannelId = m_ChannelId;
+		m_ChannelId = -1;
+		EasyPlayer_CloseStream(nChannelId);
+
+ 		if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
+
+		if (NULL != pDlgRender)	
+		{
+			//ÉèÖÃÂ¼ÏñÍ£Ö¹×´Ì¬
+			pDlgRender->SetChannelStatus(0,pDlgRender->channelStatus.showOSD);
+			pDlgRender->Invalidate();
+		}
+		if (NULL != pBtnPreview)		pBtnPreview->SetWindowText(TEXT("Play"));
+	}
+	else
+	{
+		wchar_t wszURL[128] = {0,};
+		 if (mbstowcs(wszURL, url, sizeof(wszURL) / sizeof(wszURL[0])) == -1) {
+			     MessageBoxW(NULL, L"ojoj", MB_OK | MB_ICONINFORMATION);
+
+		 return;
+		 }
+	
+		 
+		char szURL[128] = {0,};
+		if (WideCharToMultiByte(CP_UTF8, 0, wszURL, -1, szURL, sizeof(szURL), NULL, NULL) == 0) {
+         return;
+        }
+
+		char szUsername[32] = {0,};
+		char szPassword[32] = {0,};
+
+
+		int nRtpOverTcp = 1;
+		if (NULL != pChkRTPTransMode)
+		{
+			nRtpOverTcp= pChkRTPTransMode->GetCheck();
+		}
+		bool bHardDecode = true;
+		if (pChkDecodeMode)
+		{
+			int nCheck = pChkDecodeMode->GetCheck() ;
+			if (nCheck== 1)
+			{
+				bHardDecode = true;
+			} 
+			else
+			{
+				bHardDecode = false ;
+			}
+		}
+
+
+		HWND hWnd = NULL;
+		if (NULL != pDlgRender)	hWnd = pDlgRender->GetSafeHwnd();
+		m_ChannelId = EasyPlayer_OpenStream(szURL, hWnd, (RENDER_FORMAT)RenderFormat, nRtpOverTcp, szUsername, szPassword, &CDlgVideo::EasyPlayerCallBack, this, bHardDecode, NULL, NULL);
+
+		if (m_ChannelId > 0)
+		{
+		
+			int iPos = pSliderCache->GetPos();
+			EasyPlayer_SetFrameCache(m_ChannelId, iPos);		//ÉèÖÃ»º´æ
+			EasyPlayer_PlaySound(m_ChannelId);
+
+			CString strFilePath = GET_MODULE_FILE_INFO.strPath;
+			char sFilePath[MAX_PATH];
+
+			EasyPlayer_SetShownToScale(m_ChannelId, shownToScale);
+
+			EasyPlayer_SetManuRecordPath(m_ChannelId, sFilePath);
+			EasyPlayer_SetManuPicShotPath(m_ChannelId, sFilePath);
+
+			if (NULL != pDlgRender)	pDlgRender->SetChannelId(m_ChannelId);
+
+			if (NULL != pBtnPreview)		pBtnPreview->SetWindowText(TEXT("Stop"));
+		}
+	}
 }
 
 void	CDlgVideo::SetShownToScale(int shownToScale)
