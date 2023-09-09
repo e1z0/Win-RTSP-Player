@@ -270,7 +270,7 @@ void	CEasyPlayerDlg::CreateComponents()
 		pChkShownToScale.SetCheck(BST_CHECKED);
 	}
 
-	pChkShownToScale.SetWindowText(TEXT("∞¥±»¿˝œ‘ æ"));
+	pChkShownToScale.SetWindowText(TEXT("Scale"));
 
 	if (NULL == pVideoWindow)
 	{
