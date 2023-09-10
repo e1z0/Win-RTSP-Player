@@ -25,3 +25,10 @@ This RTSP Windows player is a fork of complete RTSP streaming media player proje
 
 - [x] English Translation
 - [x] Auto playback during startup 
+
+## Usage ##
+
+* Download **7z** file
+* Extract
+* Write down your rtsp streams in **rtsp.txt** file (one per line, with login credentials)
+* Run **win-rtsp-player.exe**
