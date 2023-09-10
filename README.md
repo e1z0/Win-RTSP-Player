@@ -1,5 +1,8 @@
 # Win RTSP Player #
 
+<img src="https://raw.githubusercontent.com/e1z0/Win-RTSP-Player/master/pics/player_in_action.png" data-canonical-src="https://raw.githubusercontent.com/e1z0/Win-RTSP-Player/master/pics/player_in_action.png" width="600"/>
+
+
 This RTSP Windows player is a fork of complete RTSP streaming media player project developed by TSINGSEE Qingxi open platform. Video encoding supports H.264, H.265, MPEG4, MJPEG, and audio supports G711A, G711U, G726, AAC. Supports RTSP over TCP/UDP protocol, supports soft/hard decoding, and is an excellent set of playback components for security streaming media platforms! Windows version has gone through many years of development and iteration, and has been used in many commercial projects. It has become very stable and complete. Its functions include: live broadcast, video recording, and screenshots. It should be said that it has the most functionality, stability and completeness on the market. A powerful RTSP player!
 
 
