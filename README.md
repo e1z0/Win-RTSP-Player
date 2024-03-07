@@ -1,5 +1,7 @@
 # Win RTSP Player #
 
+Look at my new project [AnotherRTSP](https://github.com/e1z0/AnotherRTSP).
+
 <img src="https://raw.githubusercontent.com/e1z0/Win-RTSP-Player/master/pics/player_in_action.png" data-canonical-src="https://raw.githubusercontent.com/e1z0/Win-RTSP-Player/master/pics/player_in_action.png" width="600"/>
 
 
